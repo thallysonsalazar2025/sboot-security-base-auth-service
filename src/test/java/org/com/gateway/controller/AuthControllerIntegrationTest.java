@@ -34,7 +34,7 @@ public class AuthControllerIntegrationTest {
     @Test
     public void testLoginSuccess() throws Exception {
         // Arrange
-        LoginRequest loginRequest = new LoginRequest("add", "dss");
+        LoginRequest loginRequest = new LoginRequest("admin", "admin123");
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")

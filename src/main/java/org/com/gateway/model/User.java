@@ -24,4 +24,10 @@ public class User {
 
     @Column(nullable = false)
     private String role;
+
+    @Column(name = "company_id")
+    private String companyId;
+
+    @Column(name = "employee_id")
+    private String employeeId;
 }

@@ -25,11 +25,13 @@ public class JwtServiceConfig {
         this.expirationInSeconds = expirationInSeconds;
     }
 
-    public String generateToken(String username, List<String> roles) {
+    public String generateToken(String username, List<String> roles, String companyId, String employeeId) {
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(username)
                 .claim("roles", roles)
+                .claim("companyId", companyId)
+                .claim("employeeId", employeeId)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(expirationInSeconds)))
                 .signWith(signingKey)
