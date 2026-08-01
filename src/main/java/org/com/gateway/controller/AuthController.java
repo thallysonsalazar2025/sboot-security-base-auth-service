@@ -8,6 +8,7 @@ import org.com.gateway.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,9 @@ public class AuthController {
             LoginResponse response = authService.authenticate(request);
             log.info("Login bem-sucedido para o usuário: {}", request.username());
             return ResponseEntity.ok(response);
+        } catch (AuthenticationException exception) {
+            log.warn("Falha de autenticação por credenciais inválidas");
+            throw exception;
         } catch (Exception e) {
             log.error("Falha na tentativa de login para o usuário: {}", request.username(), e);
             throw e;

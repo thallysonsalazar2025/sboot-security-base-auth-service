@@ -34,7 +34,7 @@ public class AuthControllerIntegrationTest {
     @Test
     public void testLoginSuccess() throws Exception {
         // Arrange
-        LoginRequest loginRequest = new LoginRequest("add", "dss");
+        LoginRequest loginRequest = new LoginRequest("admin", "admin123");
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
@@ -64,8 +64,17 @@ public class AuthControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized()); // Or another appropriate error code
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(401))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Unauthorized"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Invalid credentials"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.path").value("/api/auth/login"))
+                .andExpect(MockMvcResultMatchers.content().string(
+                        org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("invalidUser"))))
+                .andExpect(MockMvcResultMatchers.content().string(
+                        org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("wrongPassword"))));
     }
 }

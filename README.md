@@ -6,7 +6,8 @@ Gateway/BFF em Java com Spring Boot para autenticação e controle de acesso por
 
 1. Front envia `username` e `password` para `POST /api/auth/login`.
 2. Gateway valida credenciais no `AuthenticationManager`.
-3. Gateway emite JWT contendo `sub` (usuário) e `roles` (perfis).
+3. Gateway emite JWT contendo `sub` (usuário), `roles` (perfis), contexto do tenant,
+   `iss` e `aud`.
 4. Gateway devolve token para o front-end.
 5. Front usa `Authorization: Bearer <token>` para consumir rotas protegidas.
 
@@ -51,6 +52,10 @@ Header:
 - `prefeitura / prefeitura123` → `ROLE_PREFEITURA`
 
 ## Executar
+
+Configure `JWT_SECRET` fora do repositório. `JWT_ISSUER` e `JWT_AUDIENCE` podem ser
+sobrescritos por ambiente; os valores padrão são `payroll-auth` e
+`payroll-publisher`, respectivamente.
 
 ```bash
 mvn spring-boot:run

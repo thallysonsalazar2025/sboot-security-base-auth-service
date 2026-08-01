@@ -2,7 +2,9 @@ package org.com.gateway.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import org.com.gateway.model.request.LoginRequest;
+import org.com.gateway.security.JwtServiceConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,8 +28,11 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String validUsername = "joao.silva";
-    private final String validPassword = "senhaForte123";
+    @Autowired
+    private JwtServiceConfig jwtServiceConfig;
+
+    private final String validUsername = "admin";
+    private final String validPassword = "admin123";
 
     @Test
     void shouldLoginAndReturnJwt() throws Exception {
@@ -39,6 +44,26 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.tokenType").value("Bearer"));
+    }
+
+    @Test
+    void shouldIncludeCompanyAndEmployeeClaimsInJwt() throws Exception {
+        LoginRequest loginRequest = new LoginRequest(validUsername, validPassword);
+
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = loginResult.getResponse().getContentAsString();
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        String token = responseJson.get("accessToken").asText();
+
+        Claims claims = jwtServiceConfig.extractAllClaims(token);
+
+        org.junit.jupiter.api.Assertions.assertEquals("10", claims.get("companyId", String.class));
+        org.junit.jupiter.api.Assertions.assertEquals("123", claims.get("employeeId", String.class));
     }
 
     @Test
