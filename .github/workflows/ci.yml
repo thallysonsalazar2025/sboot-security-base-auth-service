@@ -18,6 +18,13 @@ jobs:
     name: Build and test
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    env:
+      DB_URL: jdbc:h2:mem:auth-ci;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+      DB_USERNAME: sa
+      DB_PASSWORD: ""
+      JWT_SECRET: ci-test-key-0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz
+      JWT_ISSUER: payroll-auth
+      JWT_AUDIENCE: payroll-publisher
     steps:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
