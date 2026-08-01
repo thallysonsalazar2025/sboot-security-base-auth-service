@@ -5,6 +5,8 @@ security:
   jwt:
     secret: "${JWT_SECRET}"
     expiration-seconds: 3600
+    issuer: "${JWT_ISSUER:payroll-auth}"
+    audience: "${JWT_AUDIENCE:payroll-publisher}"
 
 spring:
   application:
